@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Blog App</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: black;
+      color: white;
+    }
+    .content-container {
+      margin-left: 700px;
+    }
+    .links-container {
+      margin-top: 5em;
+    }
+  </style>
+</head>
+<body>
+  <div style="background-color: black;">
+    <h1 class="content-container" style="color: blue;">Blog App</h1>
+    <div class="content-container">
+      <h2>User Links</h2>
+      <% if user_signed_in? %>
+        <%= link_to "Sign out", destroy_user_session_path, method: :delete, data: { turbo_method: :delete } %>
+        <%= link_to "Edit Registration", edit_user_registration_path %> 
+        <%= link_to "All Post", posts_path %>
+      <% elsif !admin_signed_in? %>
+        <%= link_to "Sign up", new_user_registration_path %>
+        <%= link_to "Sign in", new_user_session_path %>
+      <% end %>
+
+      <% if admin_signed_in? %>
+        <h1>Admin links</h1>
+        <%= link_to "Sign out", destroy_admin_session_path, method: :delete, data: { turbo_method: :delete } %>
+        <%= link_to "Edit Registration", edit_admin_registration_path %>
+      <% elsif !user_signed_in? %>
+        <h1>Admin links</h1>
+        <%= link_to "Sign up", new_admin_registration_path %>
+        <%= link_to "Sign in", new_admin_session_path %>
+      <% end %> 
+    </div>
+    
+    <div class="links-container"></div>
+  </div>
+</body>
+</html>
