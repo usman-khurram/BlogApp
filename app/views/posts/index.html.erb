@@ -1,29 +1,44 @@
 <div style="background-color: orange;">
-<h1 style="text-align: center; color: blue;font-size: 50px;margin-bottom: 10px">All Posts</h1>
-<% if user_signed_in? %>
-<div style="text-align: right;font-size: 30px;padding-bottom: 30px;margin-right: 20px">
-  <%= link_to "Sign out", destroy_user_session_path, method: :delete, data: { turbo_method: :delete } %>
-  <%= link_to "Edit Registration", edit_user_registration_path %> 
-  </div>
-<%end%>
-<div style="margin-left: 720px;color:black; font-size: 30px">
-  <%= link_to 'New Post', new_post_path %>
-  <ul>
-    <% @posts.each do |post| %>
-      <li>
-        <%= link_to post.title, post_path(post) %>
-        <% if post.image.attached? %>
-        <div style="margin-left: -10px">
-          <%= image_tag post.image %></div>
-        <% end %>
-        <%= link_to "Edit", edit_post_path(post) %>
-        <%= link_to "Delete", post_path(post), method: :delete, data: { turbo_method: :delete } %>
-      </li>
-    <% end %>
-  </ul>
+  <h1 style="text-align: center; color: blue; font-size: 50px; margin-bottom: 10px;">All Posts</h1>
 
-  <div class="pagination">
-    <%= will_paginate @posts %>
+  <% if user_signed_in? %>
+    <div style="text-align: right; font-size: 30px; padding-bottom: 30px; margin-right: 20px;">
+      <%= link_to "Sign out", destroy_user_session_path, method: :delete, data: { turbo_method: :delete } %>
+      <%= link_to "Edit Registration", edit_user_registration_path %>
+    </div>
+  <% end %>
+
+  <div style="margin-left: 720px; color: black; font-size: 30px;">
+    <%= link_to 'New Post', new_post_path %>
+    <ul>
+      <% @posts.each do |post| %>
+        <li>
+          <%= link_to post.title, post_path(post) %>
+          <% if post.image.attached? %>
+            <div style="margin-left: -10px; width: 300px; height: 200px;">
+              <%= image_tag post.image %>
+            </div>
+          <% end %>
+
+          <h3>Comments</h3>
+          <ul>
+            <% post.comments.each do |comment| %>
+              <li>
+                <%= comment.body %>
+                <%= link_to "Delete Comment", post_comment_path(post, comment), method: :delete, data: { turbo_method: :delete }, class: "btn btn-danger", style: "margin-left: 10px;" %>
+              </li>
+            <% end %>
+          </ul>
+
+          <%= link_to "Add Comment ", new_post_comment_path(post), class: "btn btn-primary", style: "margin-left: 10px;" %>
+          <%= link_to "Edit", edit_post_path(post), class: "btn btn-secondary", style: "margin-left: 10px;" %>
+          <%= link_to "Delete Post", post_path(post), method: :delete, data: { turbo_method: :delete }, class: "btn btn-danger", style: "margin-left: 10px;" %>
+        </li>
+      <% end %>
+    </ul>
+
+    <div class="pagination">
+      <%= will_paginate @posts %>
+    </div>
   </div>
-</div>
 </div>

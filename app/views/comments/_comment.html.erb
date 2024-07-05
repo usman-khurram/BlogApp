@@ -1,0 +1,7 @@
+<div class="comment">
+  <strong><%= comment.user.email %>:</strong>
+  <p><%= comment.body %></p>
+  <% if comment.user == current_user %>
+    <%= link_to "Delete", [comment.commentable, comment], method: :delete, data: { tutbo_method: :delete } %>
+  <% end %>
+</div>

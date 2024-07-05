@@ -13,5 +13,7 @@ Rails.application.routes.draw do
   get 'mains/users'
   get 'mains/admin'
   get 'mains/moderator'
-  resources :posts
+   resources :posts do
+    resources :comments, only: [:create, :destroy,:new]
+  end
 end

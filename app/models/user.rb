@@ -4,4 +4,5 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,:confirmable
   
   has_many :posts, dependent: :destroy
+  has_many :comments, dependent: :destroy
 end
