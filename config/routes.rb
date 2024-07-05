@@ -14,6 +14,6 @@ Rails.application.routes.draw do
   get 'mains/admin'
   get 'mains/moderator'
    resources :posts do
-    resources :comments, only: [:create, :destroy,:new]
+    resources :comments
   end
 end
