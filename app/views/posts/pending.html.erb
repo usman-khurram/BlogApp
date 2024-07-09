@@ -1,0 +1,36 @@
+<div style="background-color: grey;">
+  <h1 style="text-align: center; color: white; font-size: 50px; margin-bottom: 10px;">Pending Posts</h1>
+
+  <div style="margin-left: 720px; color: black; font-size: 30px;">
+    <ul>
+      <% @posts.each do |post| %>
+        <li>
+          <%= link_to post.title, post_path(post) %>
+          <% if post.image.attached? %>
+            <div style="margin-left: -10px; width: 300px; height: 200px;">
+              <%= image_tag post.image %>
+            </div>
+          <% end %>
+
+          <h3>Comments</h3>
+          <ul>
+            <% post.comments.each do |comment| %>
+              <li>
+                <%= comment.body %>
+                <%= link_to "Delete Comment", post_comment_path(post, comment), method: :delete, data: { turbo_method: :delete }, class: "btn btn-danger", style: "margin-left: 10px;" %>
+              </li>
+            <% end %>
+          </ul>
+
+         <%= button_to "Approve", approve_post_path(post), method: :patch, class: "btn btn-success", style: "margin-left: 10px;" %>
+          <%= link_to "Edit", edit_post_path(post), class: "btn btn-secondary", style: "margin-left: 10px;" %>
+          <%= link_to "Delete Post", post_path(post), method: :delete, data: { turbo_method: :delete }, class: "btn btn-danger", style: "margin-left: 10px;" %>
+        </li>
+      <% end %>
+    </ul>
+
+    <div class="pagination">
+      <%= will_paginate @posts %>
+    </div>
+  </div>
+</div>

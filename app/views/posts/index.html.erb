@@ -1,44 +1,167 @@
-<div style="background-color: orange;">
-  <h1 style="text-align: center; color: blue; font-size: 50px; margin-bottom: 10px;">All Posts</h1>
-
+<!DOCTYPE html>
+<html>
+<head>
+  <title>All Posts</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+    .header {
+      background-color: grey;
+      padding: 20px;
+      text-align: center;
+    }
+    .header h1 {
+      margin: 0;
+      color: white;
+      font-size: 50px;
+    }
+    .nav {
+      text-align: right;
+      font-size: 18px;
+      margin-right: 20px;
+    }
+    .nav a {
+      margin-left: 10px;
+      color: white;
+      text-decoration: none;
+      background-color: #007bff;
+      padding: 10px 15px;
+      border-radius: 5px;
+    }
+    .nav a:hover {
+      background-color: #0056b3;
+    }
+    .container {
+      margin: 20px auto;
+      max-width: 800px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .post-list {
+      list-style-type: none;
+      padding: 0;
+    }
+    .post-list li {
+      margin-bottom: 20px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+    }
+    .post-list li h3 {
+      margin: 0 0 10px;
+    }
+    .post-list li img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin-bottom: 10px;
+    }
+    .comment-list {
+      list-style-type: none;
+      padding: 0;
+      margin: 10px 0 0 20px;
+    }
+    .comment-list li {
+      margin-bottom: 10px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 5px 10px;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+    .btn-primary {
+      background-color: #007bff;
+    }
+    .btn-primary:hover {
+      background-color: #0056b3;
+    }
+    .btn-secondary {
+      background-color: #6c757d;
+    }
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+    .btn-danger {
+      background-color: #dc3545;
+    }
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
+    .btn-success {
+      background-color: #28a745;
+    }
+    .btn-success:hover {
+      background-color: #218838;
+    }
+    .pagination {
+      margin-top: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>All Posts</h1>
+  </div>
+  
   <% if user_signed_in? %>
-    <div style="text-align: right; font-size: 30px; padding-bottom: 30px; margin-right: 20px;">
+    <div class="nav">
       <%= link_to "Sign out", destroy_user_session_path, method: :delete, data: { turbo_method: :delete } %>
       <%= link_to "Edit Registration", edit_user_registration_path %>
     </div>
   <% end %>
-
-  <div style="margin-left: 720px; color: black; font-size: 30px;">
-    <%= link_to 'New Post', new_post_path %>
-    <ul>
+  
+  <% if moderator_signed_in? %>
+    <div class="nav">
+      <%= link_to "Sign out", destroy_moderator_session_path, method: :delete, data: { turbo_method: :delete } %>
+      <%= link_to "Edit Registration", edit_moderator_registration_path %>
+      <%= link_to "Pending Posts", pending_posts_path %>
+    </div>
+  <% end %>
+  
+  <div class="container">
+    <%= link_to 'New Post', new_post_path, class: 'btn btn-primary' %>
+    <ul class="post-list">
       <% @posts.each do |post| %>
         <li>
-          <%= link_to post.title, post_path(post) %>
+          <h2><%= link_to post.title, post_path(post) %></h2>
           <% if post.image.attached? %>
-            <div style="margin-left: -10px; width: 300px; height: 200px;">
-              <%= image_tag post.image %>
-            </div>
+            <%= image_tag post.image %>
           <% end %>
-
+          
           <h3>Comments</h3>
-          <ul>
+          <ul class="comment-list">
             <% post.comments.each do |comment| %>
               <li>
                 <%= comment.body %>
-                <%= link_to "Delete Comment", post_comment_path(post, comment), method: :delete, data: { turbo_method: :delete }, class: "btn btn-danger", style: "margin-left: 10px;" %>
+                <%= link_to "Delete Comment", post_comment_path(post, comment), method: :delete, data: { turbo_method: :delete }, class: "btn btn-danger" %>
               </li>
             <% end %>
           </ul>
-
-          <%= link_to "Add Comment ", new_post_comment_path(post), class: "btn btn-primary", style: "margin-left: 10px;" %>
-          <%= link_to "Edit", edit_post_path(post), class: "btn btn-secondary", style: "margin-left: 10px;" %>
-          <%= link_to "Delete Post", post_path(post), method: :delete, data: { turbo_method: :delete }, class: "btn btn-danger", style: "margin-left: 10px;" %>
+          
+          <%= link_to "Add Comment", new_post_comment_path(post), class: "btn btn-primary" %>
+          <%= link_to "Edit", edit_post_path(post), class: "btn btn-secondary" %>
+          <%= link_to "Delete Post", post_path(post), method: :delete, data: { turbo_method: :delete }, class: "btn btn-danger" %>
+          
+          <% if moderator_signed_in? && post.approval_status == 'pending' %>
+            <%= button_to "Approve", approve_post_path(post), method: :patch, class: "btn btn-success" %>
+          <% end %>
         </li>
       <% end %>
     </ul>
-
+    
     <div class="pagination">
       <%= will_paginate @posts %>
     </div>
   </div>
-</div>
+</body>
+</html>

@@ -6,43 +6,95 @@
     body {
       margin: 0;
       padding: 0;
-      background-color: black;
-      color: white;
+      background-color: #1c1c1c;
+      color: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+    .header {
+      background-color: #282828;
+      padding: 1em;
+      text-align: center;
+    }
+    .header h1 {
+      margin: 0;
+      color: #00aaff;
     }
     .content-container {
-      margin-left: 700px;
+      margin: 2em auto;
+      max-width: 600px;
+      text-align: center;
     }
     .links-container {
-      margin-top: 5em;
+      margin-top: 2em;
+    }
+    .links-container a {
+      display: inline-block;
+      margin: 0.5em;
+      padding: 0.5em 1em;
+      background-color: #00aaff;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+    .links-container a:hover {
+      background-color: #007acc;
+    }
+    .section-title {
+      margin-top: 1em;
+      font-size: 1.5em;
+      color: #00aaff;
     }
   </style>
 </head>
 <body>
-  <div style="background-color: black;">
-    <h1 class="content-container" style="color: blue;">Blog App</h1>
-    <div class="content-container">
-      <h2>User Links</h2>
-      <% if user_signed_in? %>
+  <div class="header">
+    <h1>Blog App</h1>
+  </div>
+  <div class="content-container">
+    <% if user_signed_in? %>
+      <div class="links-container">
+        <h2 class="section-title">User Links</h2>
         <%= link_to "Sign out", destroy_user_session_path, method: :delete, data: { turbo_method: :delete } %>
         <%= link_to "Edit Registration", edit_user_registration_path %> 
-        <%= link_to "All Post", posts_path %>
-      <% elsif !admin_signed_in? %>
+        <%= link_to "All Posts", posts_path %>
+      </div>
+    <% elsif !admin_signed_in? && !moderator_signed_in? %>
+      <div class="links-container">
+        <h2 class="section-title">User Links</h2>
         <%= link_to "Sign up", new_user_registration_path %>
         <%= link_to "Sign in", new_user_session_path %>
-      <% end %>
-
-      <% if admin_signed_in? %>
-        <h1>Admin links</h1>
+      </div>
+    <% end %>
+    
+    <% if moderator_signed_in? %>
+      <div class="links-container">
+        <h2 class="section-title">Moderator Links</h2>
+        <%= link_to "Sign out", destroy_moderator_session_path, method: :delete, data: { turbo_method: :delete } %>
+        <%= link_to "Edit Registration", edit_moderator_registration_path %> 
+        <%= link_to "All Posts", posts_path %>
+        <%= link_to "Pending Posts", pending_posts_path %>
+      </div>
+    <% elsif !admin_signed_in? && !user_signed_in? %>
+      <div class="links-container">
+        <h2 class="section-title">Moderator Links</h2>
+        <%= link_to "Sign up", new_moderator_registration_path %>
+        <%= link_to "Sign in", new_moderator_session_path %>
+      </div>
+    <% end %>
+    
+    <% if admin_signed_in? %>
+      <div class="links-container">
+        <h2 class="section-title">Admin Links</h2>
         <%= link_to "Sign out", destroy_admin_session_path, method: :delete, data: { turbo_method: :delete } %>
         <%= link_to "Edit Registration", edit_admin_registration_path %>
-      <% elsif !user_signed_in? %>
-        <h1>Admin links</h1>
+      </div>
+    <% elsif !user_signed_in? && !moderator_signed_in? %>
+      <div class="links-container">
+        <h2 class="section-title">Admin Links</h2>
         <%= link_to "Sign up", new_admin_registration_path %>
         <%= link_to "Sign in", new_admin_session_path %>
-      <% end %> 
-    </div>
-    
-    <div class="links-container"></div>
+      </div>
+    <% end %> 
   </div>
 </body>
 </html>
